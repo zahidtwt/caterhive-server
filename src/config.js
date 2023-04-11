@@ -1,9 +1,9 @@
 require('dotenv').config();
 
 const PORT = process.env.PORT;
-const ALLOWED_CORS_DOMAIN = process.env.ALLOWED_CORS_DOMAIN;
+const MONGO_URI = process.env.MONGO_URI;
 
 module.exports = {
   PORT,
-  ALLOWED_CORS_DOMAIN,
+  MONGO_URI,
 };
