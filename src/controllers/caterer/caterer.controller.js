@@ -95,24 +95,29 @@ async function createNewCaterer(req, res) {
 }
 
 async function loginCaterer(req, res) {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  if (!email || !password)
-    return res.status(400).json(errorMessages.invlidLogin);
+    if (!email || !password)
+      return res.status(400).json(errorMessages.invlidLogin);
 
-  const caterer = await caterers.findOne({
-    email,
-  });
+    const caterer = await caterers.findOne({
+      email,
+    });
 
-  if (!caterer) return res.status(400).json(errorMessages.invlidLogin);
+    if (!caterer) return res.status(400).json(errorMessages.invlidLogin);
 
-  const passwordMatch = await verifyPassword(password, caterer.password);
+    const passwordMatch = await verifyPassword(password, caterer.password);
 
-  if (!passwordMatch) return res.status(400).json(errorMessages.invlidLogin);
+    if (!passwordMatch) return res.status(400).json(errorMessages.invlidLogin);
 
-  const token = jwt.sign({ id: caterer._id }, JWT_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ id: caterer._id }, JWT_KEY, { expiresIn: '1h' });
 
-  return res.status(200).json(token);
+    return res.status(200).json(token);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
 }
 
 module.exports = {

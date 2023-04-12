@@ -3,18 +3,21 @@ const { Schema, model } = require('mongoose');
 const catererSchema = new Schema({
   businessName: {
     type: String,
+    unique: true,
     min: 3,
     max: 255,
     required: true,
   },
   email: {
     type: String,
+    unique: true,
     min: 3,
     max: 255,
     required: true,
   },
   phone: {
     type: String,
+    unique: true,
     min: 9,
     max: 15,
     required: true,
