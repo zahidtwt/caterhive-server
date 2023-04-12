@@ -1,7 +1,6 @@
 const areas = require('../../models/area/area.model');
 const areaValidatorSchema = require('./area.validate');
 const validator = require('../../utils/validator');
-const setErrorMessage = require('../../utils/setErrorMessage');
 const errorMessages = require('../../utils/errorMessages');
 
 async function getAllAreas(req, res) {
@@ -21,8 +20,7 @@ async function getAreaById(req, res) {
 
     const area = await areas.findById(id);
 
-    if (!area)
-      return res.status(404).json(setErrorMessage(errorMessages.notFound));
+    if (!area) return res.status(404).json(errorMessages.notFound);
 
     return res.status(200).json(area);
   } catch (error) {
@@ -37,14 +35,11 @@ async function createNewArea(req, res) {
 
     const { error } = validator(areaValidatorSchema, body);
 
-    if (error) return res.status(400).json(setErrorMessage(error.message));
+    if (error) return res.status(400).json(error.message);
 
     const exists = await areas.findOne({ name: body.name });
 
-    if (exists)
-      return res
-        .status(400)
-        .json(setErrorMessage(setErrorMessage(errorMessages.exists)));
+    if (exists) return res.status(400).json(errorMessages.exists);
 
     const newArea = await areas.create(body);
 
