@@ -5,7 +5,6 @@ const {
   CLOUDINARY_NAME,
   CLOUDINARY_API_SECRET,
 } = require('../config');
-const setErrorMessage = require('../utils/setErrorMessage');
 
 cloudinary.config({
   cloud_name: CLOUDINARY_NAME,
@@ -32,7 +31,7 @@ async function uploadImageToCloudinary(
       format: 'webp',
       crop: 'fill',
     })
-    .catch((error) => setErrorMessage(`Cloudinary error: ${error}`));
+    .catch((error) => `Cloudinary error: ${error}`);
 }
 
 async function deleteImageFromClodinary(id) {
