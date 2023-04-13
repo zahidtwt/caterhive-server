@@ -76,7 +76,7 @@ async function createNewCustomer(req, res) {
     const encryptedPassword = await encryptPassword(body.password);
 
     const { secure_url } = await uploadImageToCloudinary(
-      body.brandImg,
+      body.profileImg,
       500,
       500
     );

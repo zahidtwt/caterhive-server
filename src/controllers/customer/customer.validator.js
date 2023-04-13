@@ -1,7 +1,7 @@
 const joi = require('joi');
 
 const customerValidatorSchema = joi.object({
-  fullName: joi.string().min(3).max(255).required().label('business Name'),
+  fullName: joi.string().min(3).max(255).required().label('Full Name'),
   email: joi
     .string()
     .email({ tlds: false })
@@ -13,7 +13,6 @@ const customerValidatorSchema = joi.object({
   password: joi.string().min(8).max(255).required().label('Password'),
   address: joi.string().min(3).max(255).required().label('business Name'),
   profileImg: joi.string().label('Profile Image'),
-
   area: joi.string().min(24).max(24).required().label('Area'),
 });
 
