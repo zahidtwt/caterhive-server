@@ -1,4 +1,6 @@
 const foodItems = require('../../models/food-item/food-item.model');
+const { uploadImageToCloudinary } = require('../../services/cloudinary');
+const errorMessages = require('../../utils/errorMessages');
 const validator = require('../../utils/validator');
 const foodItemValidatorSchema = require('./food-item.validator');
 
@@ -19,14 +21,19 @@ async function createNewFoodItem(req, res) {
   try {
     const { authUser, body } = req;
 
-    const foodItemCreds = {
-      caterer: authUser,
-      ...body,
-    };
+    if (!authUser) return res.status(404).json('User not found');
 
-    const { error } = validator(foodItemValidatorSchema, foodItemCreds);
+    const { error } = validator(foodItemValidatorSchema, body);
 
     if (error) return res.status(400).json(error.message);
+
+    const { secure_url } = await uploadImageToCloudinary(body.imgUrl);
+
+    const foodItemCreds = {
+      ...body,
+      caterer: authUser,
+      imgUrl: secure_url,
+    };
 
     const newFoodItem = await foodItems.create(foodItemCreds);
 
