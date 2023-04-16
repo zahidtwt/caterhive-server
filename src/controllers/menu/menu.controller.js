@@ -115,9 +115,41 @@ async function reviewMenuById(req, res) {
   }
 }
 
+async function addMenuToBookmark(req, res) {
+  try {
+    const { authUser, params } = req;
+    const { id } = params;
+
+    const menu = await menus.findById(id);
+
+    if (!menu) return res.status(404).json(errorMessages.notFound);
+
+    const customer = await customers.findById(authUser);
+
+    if (!customer) return res.status(404).json(errorMessages.accessDenied);
+
+    const customerMenus = customer.bookmarks.menus;
+    if (customerMenus.includes(id))
+      customer.bookmarks.menus = customerMenus.filter(
+        (menu) => menu._id + '' !== id
+      );
+    else customer.bookmarks.menus.push(id);
+
+    await customer.save();
+
+    await customer.populate('area');
+
+    return res.status(200).json(customer);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
+
 module.exports = {
   getMenusByCaterer,
   getMenuById,
   createNewMenu,
   reviewMenuById,
+  addMenuToBookmark,
 };
