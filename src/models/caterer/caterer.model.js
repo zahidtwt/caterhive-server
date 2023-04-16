@@ -40,6 +40,13 @@ const catererSchema = new Schema({
     max: 255,
     required: true,
   },
+  rating: {
+    type: Number,
+    min: 0,
+    max: 5,
+    required: true,
+    default: 0,
+  },
   reviews: {
     type: [Schema.Types.ObjectId],
     ref: 'Review',
