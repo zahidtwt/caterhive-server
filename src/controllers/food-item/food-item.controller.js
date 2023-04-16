@@ -1,14 +1,18 @@
 const foodItems = require('../../models/food-item/food-item.model');
 const { uploadImageToCloudinary } = require('../../services/cloudinary');
-const errorMessages = require('../../utils/errorMessages');
 const validator = require('../../utils/validator');
 const foodItemValidatorSchema = require('./food-item.validator');
 
 async function getAllFoodItems(req, res) {
   try {
-    const { authUser } = req;
+    const { authUser, query } = req;
 
-    const allFoodItems = await foodItems.find({ caterer: { _id: authUser } });
+    const { searchBy = 'title', search = '' } = query;
+
+    const allFoodItems = await foodItems.find({
+      caterer: { _id: authUser },
+      [searchBy]: { $regex: search, $options: 'i' },
+    });
 
     return res.status(200).json(allFoodItems);
   } catch (error) {

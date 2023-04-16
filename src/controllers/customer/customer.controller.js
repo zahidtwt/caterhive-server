@@ -46,7 +46,9 @@ async function getOwnData(req, res) {
   try {
     const { authUser } = req;
 
-    const customer = await customers.findById(authUser, { password: 0 });
+    const customer = await customers
+      .findById(authUser, { password: 0 })
+      .populate('area');
     // .populate(populateProp);
 
     if (!customer) return res.status(404).json(errorMessages.notFound);
