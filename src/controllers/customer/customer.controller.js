@@ -4,7 +4,7 @@ const { uploadImageToCloudinary } = require('../../services/cloudinary');
 const errorMessages = require('../../utils/errorMessages');
 const { encryptPassword, verifyPassword } = require('../../utils/password');
 const validator = require('../../utils/validator');
-const { JWT_KEY } = require('../../config');
+const { JWT_KEY, ENV } = require('../../config');
 const customerValidatorSchema = require('./customer.validator');
 
 const populateProp = [
@@ -113,7 +113,9 @@ async function loginCustomer(req, res) {
 
     if (!passwordMatch) return res.status(400).json(errorMessages.invlidLogin);
 
-    const token = jwt.sign({ id: customer._id }, JWT_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ id: customer._id }, JWT_KEY, {
+      expiresIn: ENV === 'production' ? '1h' : '30d',
+    });
 
     return res.status(200).json(token);
   } catch (error) {
