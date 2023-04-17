@@ -8,7 +8,6 @@ const { JWT_KEY } = require('../../config');
 const customerValidatorSchema = require('./customer.validator');
 
 const populateProp = [
-  { path: 'orders' },
   {
     path: 'bookmarks',
     populate: [
@@ -16,6 +15,7 @@ const populateProp = [
         path: 'caterers',
         model: 'Caterer',
       },
+
       {
         path: 'menus',
         model: 'Menu',
@@ -45,11 +45,12 @@ async function getCustomerById(req, res) {
 async function getOwnData(req, res) {
   try {
     const { authUser } = req;
+    const { populate } = req.query;
 
     const customer = await customers
       .findById(authUser, { password: 0 })
-      .populate('area');
-    // .populate(populateProp);
+      .populate('area')
+      .populate(populate === '1' ? populateProp : '');
 
     if (!customer) return res.status(404).json(errorMessages.notFound);
 
