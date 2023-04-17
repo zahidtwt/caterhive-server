@@ -18,7 +18,7 @@ async function getMenusByCaterer(req, res) {
     return res.status(200).json(allMenus);
   } catch (error) {
     console.log(error);
-    res.status(500).json(error);
+    return res.status(500).json(error);
   }
 }
 
@@ -39,7 +39,7 @@ async function getMenuById(req, res) {
     return res.status(200).json(menu);
   } catch (error) {
     console.log(error);
-    res.status(500).json(error);
+    return res.status(500).json(error);
   }
 }
 
@@ -66,7 +66,7 @@ async function createNewMenu(req, res) {
     return res.status(201).json(newMenu);
   } catch (error) {
     console.log(error);
-    res.status(500).json(error);
+    return res.status(500).json(error);
   }
 }
 
@@ -111,7 +111,7 @@ async function reviewMenuById(req, res) {
     return res.status(200).json(menu);
   } catch (error) {
     console.log(error);
-    res.status(500).json(error);
+    return res.status(500).json(error);
   }
 }
 
