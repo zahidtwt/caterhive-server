@@ -11,9 +11,13 @@ const customers = require('../../models/customer/customer.model');
 
 async function getMenusByCaterer(req, res) {
   try {
-    const { authUser } = req;
+    const { authUser, query } = req;
+    const { search, searchBy = 'title' } = query;
 
-    const allMenus = await menus.find({ caterer: { _id: authUser } });
+    const allMenus = await menus.find({
+      caterer: { _id: authUser },
+      [searchBy]: search,
+    });
 
     return res.status(200).json(allMenus);
   } catch (error) {
