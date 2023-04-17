@@ -6,7 +6,9 @@ async function getAllDayMenusByCaterer(req, res) {
   try {
     const { authUser } = req;
 
-    const allDayMenus = await dayMenus.find({ caterer: { _id: authUser } });
+    const allDayMenus = await dayMenus
+      .find({ caterer: { _id: authUser } })
+      .populate('menus');
 
     return res.status(200).json(allDayMenus);
   } catch (error) {
@@ -29,6 +31,8 @@ async function createNewDayMenu(req, res) {
       caterer: authUser,
       ...body,
     });
+
+    await dayMenu.populate('menus');
 
     return res.status(201).json(dayMenu);
   } catch (error) {

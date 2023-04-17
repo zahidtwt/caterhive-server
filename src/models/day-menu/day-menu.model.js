@@ -6,6 +6,13 @@ const dayMenuSchema = new Schema({
     ref: 'Caterer',
     required: true,
   },
+  title: {
+    type: String,
+    min: 3,
+    max: 255,
+    required: true,
+    default: 'Day Menu',
+  },
   price: {
     type: Number,
     required: true,
