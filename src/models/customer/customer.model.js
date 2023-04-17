@@ -58,12 +58,6 @@ const customerSchema = new Schema({
         default: [],
       },
     },
-    ref: 'Order',
-    required: true,
-    default: {
-      caterers: [],
-      menus: [],
-    },
   },
   orders: {
     type: [Schema.Types.ObjectId],
