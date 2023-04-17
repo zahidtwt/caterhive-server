@@ -8,7 +8,7 @@ async function getAllDayMenusByCaterer(req, res) {
 
     const allDayMenus = await dayMenus
       .find({ caterer: { _id: authUser } })
-      .populate('menus');
+      .populate('menus caterer');
 
     return res.status(200).json(allDayMenus);
   } catch (error) {

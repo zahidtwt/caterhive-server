@@ -60,7 +60,7 @@ const catererSchema = new Schema({
     default: [],
   },
   weekMenu: {
-    satarday: {
+    saturday: {
       type: Schema.Types.ObjectId,
       ref: 'Day-Menu',
       default: [],
