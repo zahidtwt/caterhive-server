@@ -5,8 +5,7 @@ const validator = require('../../utils/validator');
 const catererValidatorSchema = require('./caterer.validator');
 const { uploadImageToCloudinary } = require('../../services/cloudinary');
 const jwt = require('jsonwebtoken');
-const { JWT_KEY } = require('../../config');
-const customers = require('../../models/customer/customer.model');
+const { JWT_KEY, ENV } = require('../../config');
 
 async function getAllCaterers(req, res) {
   try {
@@ -112,7 +111,9 @@ async function loginCaterer(req, res) {
 
     if (!passwordMatch) return res.status(400).json(errorMessages.invlidLogin);
 
-    const token = jwt.sign({ id: caterer._id }, JWT_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ id: caterer._id }, JWT_KEY, {
+      expiresIn: ENV === 'production' ? '1h' : '30d',
+    });
 
     return res.status(200).json(token);
   } catch (error) {
