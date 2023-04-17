@@ -59,6 +59,43 @@ const catererSchema = new Schema({
     required: true,
     default: [],
   },
+  weekMenu: {
+    satarday: {
+      type: Schema.Types.ObjectId,
+      ref: 'Day-Menu',
+      default: [],
+    },
+    sunday: {
+      type: Schema.Types.ObjectId,
+      ref: 'Day-Menu',
+      default: [],
+    },
+    monday: {
+      type: Schema.Types.ObjectId,
+      ref: 'Day-Menu',
+      default: [],
+    },
+    tuesday: {
+      type: Schema.Types.ObjectId,
+      ref: 'Day-Menu',
+      default: [],
+    },
+    wednesday: {
+      type: Schema.Types.ObjectId,
+      ref: 'Day-Menu',
+      default: [],
+    },
+    thursday: {
+      type: Schema.Types.ObjectId,
+      ref: 'Day-Menu',
+      default: [],
+    },
+    friday: {
+      type: Schema.Types.ObjectId,
+      ref: 'Day-Menu',
+      default: [],
+    },
+  },
 });
 
 const caterers = model('Caterer', catererSchema);
