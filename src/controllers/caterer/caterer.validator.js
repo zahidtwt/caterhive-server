@@ -20,4 +20,12 @@ const catererValidatorSchema = joi.object({
     .label('Operational Areas'),
 });
 
-module.exports = catererValidatorSchema;
+const dayMenuValidatorSchema = joi.object({
+  day: joi.string().min(3).max(255).required().label('Day'),
+  dayMenu: joi.string().min(24).max(24).required().label('Day Menu'),
+});
+
+module.exports = {
+  catererValidatorSchema,
+  dayMenuValidatorSchema,
+};

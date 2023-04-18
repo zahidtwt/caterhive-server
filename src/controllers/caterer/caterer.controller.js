@@ -2,10 +2,26 @@ const caterers = require('../../models/caterer/caterer.model');
 const { encryptPassword, verifyPassword } = require('../../utils/password');
 const errorMessages = require('../../utils/errorMessages');
 const validator = require('../../utils/validator');
-const catererValidatorSchema = require('./caterer.validator');
+const {
+  catererValidatorSchema,
+  dayMenuValidatorSchema,
+} = require('./caterer.validator');
 const { uploadImageToCloudinary } = require('../../services/cloudinary');
 const jwt = require('jsonwebtoken');
 const { JWT_KEY, ENV } = require('../../config');
+
+const weekMenuPopulation = {
+  path: 'weekMenu',
+  populate: [
+    { path: 'saturday', populate: 'menus caterer' },
+    { path: 'sunday', populate: 'menus caterer' },
+    { path: 'monday', populate: 'menus caterer' },
+    { path: 'tuesday', populate: 'menus caterer' },
+    { path: 'wednesday', populate: 'menus caterer' },
+    { path: 'thursday', populate: 'menus caterer' },
+    { path: 'friday', populate: 'menus caterer' },
+  ],
+};
 
 async function getAllCaterers(req, res) {
   try {
@@ -27,8 +43,9 @@ async function getCatererById(req, res) {
 
     const caterer = await caterers
       .findById(id, { password: 0 })
-      .populate('operationalAreas');
-    // .populate('reviews');
+      .populate('operationalAreas')
+      .populate(weekMenuPopulation)
+      .populate('reviews');
 
     if (!caterer) return res.status(404).json(errorMessages.notFound);
 
@@ -45,7 +62,8 @@ async function getOwnData(req, res) {
 
     const caterer = await caterers
       .findById(authUser, { password: 0 })
-      .populate('operationalAreas');
+      .populate('operationalAreas')
+      .populate(weekMenuPopulation);
     // .populate('reviews');
 
     if (!caterer) return res.status(404).json(errorMessages.notFound);
@@ -197,6 +215,31 @@ async function addCatererToBookmark(req, res) {
   }
 }
 
+async function addDayMenu(req, res) {
+  try {
+    const { authUser, body } = req;
+
+    const caterer = await caterers.findById(authUser);
+
+    if (!caterer) return res.status(404).json(errorMessages.notFound);
+
+    const { error } = validator(dayMenuValidatorSchema, body);
+
+    if (error) return res.status(400).json(error.message);
+
+    caterer.weekMenu[body.day] = body.dayMenu;
+
+    await caterer.save();
+
+    await caterer.populate(weekMenuPopulation);
+
+    return res.status(200).json(caterer);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
+
 module.exports = {
   getAllCaterers,
   getOwnData,
@@ -205,4 +248,5 @@ module.exports = {
   loginCaterer,
   reviewCatererById,
   addCatererToBookmark,
+  addDayMenu,
 };
