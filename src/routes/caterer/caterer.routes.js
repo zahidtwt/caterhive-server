@@ -7,6 +7,7 @@ const {
   getOwnData,
   addCatererToBookmark,
   reviewCatererById,
+  addDayMenu,
 } = require('../../controllers/caterer/caterer.controller');
 const auth = require('../../middlewares/auth');
 
@@ -19,5 +20,6 @@ catererRouter.post('/', createNewCaterer);
 catererRouter.post('/login', loginCaterer);
 catererRouter.post('/reviews/:id', auth, reviewCatererById);
 catererRouter.put('/bookmark/:id', auth, addCatererToBookmark);
+catererRouter.put('/dayMenu', auth, addDayMenu);
 
 module.exports = catererRouter;
