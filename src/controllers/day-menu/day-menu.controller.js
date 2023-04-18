@@ -4,10 +4,14 @@ const dayMenuValidatorSchema = require('./day-menu.validator');
 
 async function getAllDayMenusByCaterer(req, res) {
   try {
-    const { authUser } = req;
+    const { authUser, query } = req;
+    const { searchBy = 'title', search = '' } = query;
 
     const allDayMenus = await dayMenus
-      .find({ caterer: { _id: authUser } })
+      .find({
+        caterer: { _id: authUser },
+        [searchBy]: { $regex: search, $options: 'i' },
+      })
       .populate('menus caterer');
 
     return res.status(200).json(allDayMenus);
