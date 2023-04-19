@@ -6,7 +6,7 @@ const foodItemsRouter = require('./food-item/food-item.routes');
 const menusRouter = require('./menu/menu.routes');
 const dayMenuRouter = require('./day-menu/day-menu.routes');
 const orderRouter = require('./order/order.routes');
-const paymentRouter = require('./payment.routes');
+const paymentRouter = require('./payment/payment.routes');
 
 const globalRouter = express.Router();
 
