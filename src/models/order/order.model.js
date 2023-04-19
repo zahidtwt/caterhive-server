@@ -39,13 +39,18 @@ const orderSchema = new Schema({
   paymentDue: {
     type: Boolean,
     required: true,
-    default: true,
+    default: false,
   },
   shippingAddress: {
     type: String,
     min: 3,
     max: 255,
     required: true,
+  },
+  specialInstruction: {
+    type: String,
+    min: 3,
+    max: 255,
   },
   orderedAt: {
     type: Date,
