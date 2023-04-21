@@ -9,7 +9,9 @@ const {
 const { uploadImageToCloudinary } = require('../../services/cloudinary');
 const jwt = require('jsonwebtoken');
 const { JWT_KEY, ENV } = require('../../config');
-
+const customers = require('../../models/customer/customer.model');
+const { reviewValidatorSchema } = require('../menu/menu.validator');
+const reviews = require('../../models/review/review.model');
 const weekMenuPopulation = {
   path: 'weekMenu',
   populate: [
@@ -25,10 +27,47 @@ const weekMenuPopulation = {
 
 async function getAllCaterers(req, res) {
   try {
+    const { searchBy = 'businessName', search = '', nested = '' } = req.query;
+
+    let searchQuery = {};
+
+    if (search) {
+      searchQuery = nested
+        ? { [searchBy]: { _id: search } }
+        : { [searchBy]: { $regex: search, $options: 'i' } };
+    }
+
+    console.log(searchQuery);
+
     const allCaterers = await caterers
-      .find({}, { password: 0 })
-      .populate('operationalAreas');
-    // .populate('reviews');
+      .find(searchQuery, { password: 0 })
+      .populate('operationalAreas')
+      .populate(weekMenuPopulation)
+      .populate('reviews');
+
+    res.status(200).json(allCaterers);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+}
+
+async function getAllCaterersByArea(req, res) {
+  try {
+    const { area } = req.query;
+    console.log(area);
+
+    const allCaterers = await caterers
+      .find(
+        {
+          operationalAreas: { $all: [{ _id: area }] },
+        },
+        { password: 0 }
+      )
+      .sort({ rating: 'desc' })
+      .populate('operationalAreas')
+      .populate(weekMenuPopulation)
+      .populate('reviews');
 
     res.status(200).json(allCaterers);
   } catch (error) {
@@ -45,7 +84,11 @@ async function getCatererById(req, res) {
       .findById(id, { password: 0 })
       .populate('operationalAreas')
       .populate(weekMenuPopulation)
-      .populate('reviews');
+      .populate({
+        path: 'reviews',
+        model: 'Review',
+        populate: { path: 'user' },
+      });
 
     if (!caterer) return res.status(404).json(errorMessages.notFound);
 
@@ -63,8 +106,8 @@ async function getOwnData(req, res) {
     const caterer = await caterers
       .findById(authUser, { password: 0 })
       .populate('operationalAreas')
-      .populate(weekMenuPopulation);
-    // .populate('reviews');
+      .populate(weekMenuPopulation)
+      .populate('reviews');
 
     if (!caterer) return res.status(404).json(errorMessages.notFound);
 
@@ -164,6 +207,7 @@ async function reviewCatererById(req, res) {
     });
 
     caterer.reviews.push(newReview._id);
+
     await caterer.populate('reviews');
 
     caterer.rating = (
@@ -171,12 +215,21 @@ async function reviewCatererById(req, res) {
       +caterer.reviews.length
     ).toFixed(2);
 
+    console.log(
+      caterer.reviews,
+      caterer.reviews.reduce((acc, curr) => curr.rating + acc, 0),
+      +caterer.reviews.length
+    );
     await caterer.save();
 
     await caterer.populate([
+      weekMenuPopulation,
       { path: 'operationalAreas' },
+
       { path: 'reviews', populate: { path: 'user' } },
     ]);
+
+    console.log(caterer, newReview);
     return res.status(200).json(caterer);
   } catch (error) {
     console.log(error);
@@ -242,6 +295,7 @@ async function addDayMenu(req, res) {
 
 module.exports = {
   getAllCaterers,
+  getAllCaterersByArea,
   getOwnData,
   getCatererById,
   createNewCaterer,
