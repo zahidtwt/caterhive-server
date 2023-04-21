@@ -14,6 +14,13 @@ const populateProp = [
       {
         path: 'caterers',
         model: 'Caterer',
+
+        populate: [
+          {
+            path: 'operationalAreas',
+            model: 'Area',
+          },
+        ],
       },
 
       {

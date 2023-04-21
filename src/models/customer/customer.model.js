@@ -58,6 +58,10 @@ const customerSchema = new Schema({
         default: [],
       },
     },
+    default: {
+      caterers: [],
+      menus: [],
+    },
   },
   orders: {
     type: [Schema.Types.ObjectId],
