@@ -8,12 +8,14 @@ const {
   addCatererToBookmark,
   reviewCatererById,
   addDayMenu,
+  getAllCaterersByArea,
 } = require('../../controllers/caterer/caterer.controller');
 const auth = require('../../middlewares/auth');
 
 const catererRouter = express.Router();
 
 catererRouter.get('/', getAllCaterers);
+catererRouter.get('/area', getAllCaterersByArea);
 catererRouter.get('/own', auth, getOwnData);
 catererRouter.get('/:id', getCatererById);
 catererRouter.post('/', createNewCaterer);
