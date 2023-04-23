@@ -6,6 +6,11 @@ const foodItemSchema = new Schema({
     ref: 'Caterer',
     required: true,
   },
+  category: {
+    type: Schema.Types.ObjectId,
+    ref: 'Category',
+    required: true,
+  },
   title: {
     type: String,
     min: 3,
@@ -22,6 +27,10 @@ const foodItemSchema = new Schema({
     type: String,
     min: 3,
     max: 255,
+    required: true,
+  },
+  price: {
+    type: Number,
     required: true,
   },
 });
