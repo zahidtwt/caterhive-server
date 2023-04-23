@@ -7,6 +7,7 @@ const menusRouter = require('./menu/menu.routes');
 const dayMenuRouter = require('./day-menu/day-menu.routes');
 const orderRouter = require('./order/order.routes');
 const paymentRouter = require('./payment/payment.routes');
+const categoryRouter = require('./category/category.routes');
 
 const globalRouter = express.Router();
 
@@ -17,6 +18,7 @@ globalRouter.use('/foodItems', foodItemsRouter);
 globalRouter.use('/menus', menusRouter);
 globalRouter.use('/dayMenus', dayMenuRouter);
 globalRouter.use('/orders', orderRouter);
+globalRouter.use('/category', categoryRouter);
 globalRouter.use('/payment', paymentRouter);
 
 module.exports = globalRouter;
