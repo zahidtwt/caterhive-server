@@ -13,11 +13,6 @@ const areaSchema = new Schema({
     max: 255,
     required: true,
   },
-  caterers: {
-    type: [],
-    default: [],
-    required: true,
-  },
 });
 
 const areas = model('Area', areaSchema);
