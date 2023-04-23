@@ -4,7 +4,6 @@ const menuValidatorSchema = joi.object({
   title: joi.string().min(3).max(255).required().label('Title'),
   description: joi.string().min(3).max(255).required().label('Description'),
   thumbnail: joi.string().required().label('Thumbnail'),
-  price: joi.number().required().label('Price'),
   tags: joi.string().min(3).max(255).required().label('Tags'),
   foodItems: joi
     .array()

@@ -67,6 +67,15 @@ async function createNewMenu(req, res) {
 
     const newMenu = await menus.create(menuCreds);
 
+    await newMenu.populate('foodItems');
+
+    newMenu.price = newMenu.foodItems.reduce(
+      (acc, curr) => curr.price + acc,
+      0
+    );
+
+    await newMenu.save();
+
     return res.status(201).json(newMenu);
   } catch (error) {
     console.log(error);
