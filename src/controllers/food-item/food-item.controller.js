@@ -9,10 +9,12 @@ async function getAllFoodItems(req, res) {
 
     const { searchBy = 'title', search = '' } = query;
 
-    const allFoodItems = await foodItems.find({
-      caterer: { _id: authUser },
-      [searchBy]: { $regex: search, $options: 'i' },
-    });
+    const allFoodItems = await foodItems
+      .find({
+        caterer: { _id: authUser },
+        [searchBy]: { $regex: search, $options: 'i' },
+      })
+      .populate('category');
 
     return res.status(200).json(allFoodItems);
   } catch (error) {
@@ -40,6 +42,8 @@ async function createNewFoodItem(req, res) {
     };
 
     const newFoodItem = await foodItems.create(foodItemCreds);
+
+    await newFoodItem.populate('category');
 
     return res.status(201).json(newFoodItem);
   } catch (error) {
