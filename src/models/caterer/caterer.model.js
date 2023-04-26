@@ -87,6 +87,20 @@ const catererSchema = new Schema({
       ref: 'Day-Menu',
     },
   },
+  eventService: {
+    basic: {
+      type: Schema.Types.ObjectId,
+      ref: 'Event-Menu',
+    },
+    standard: {
+      type: Schema.Types.ObjectId,
+      ref: 'Event-Menu',
+    },
+    premium: {
+      type: Schema.Types.ObjectId,
+      ref: 'Event-Menu',
+    },
+  },
 });
 
 const caterers = model('Caterer', catererSchema);

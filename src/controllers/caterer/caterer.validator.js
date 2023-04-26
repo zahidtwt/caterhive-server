@@ -25,7 +25,13 @@ const dayMenuValidatorSchema = joi.object({
   dayMenu: joi.string().min(24).max(24).required().label('Day Menu'),
 });
 
+const eventServiceValidatorSchema = joi.object({
+  tier: joi.string().min(3).max(255).required().label('Day'),
+  eventMenu: joi.string().min(24).max(24).required().label('Event Menu'),
+});
+
 module.exports = {
   catererValidatorSchema,
   dayMenuValidatorSchema,
+  eventServiceValidatorSchema,
 };
