@@ -1,5 +1,7 @@
+const categories = require('../../models/category/category.model');
 const foodItems = require('../../models/food-item/food-item.model');
 const { uploadImageToCloudinary } = require('../../services/cloudinary');
+const errorMessages = require('../../utils/errorMessages');
 const validator = require('../../utils/validator');
 const foodItemValidatorSchema = require('./food-item.validator');
 
@@ -12,6 +14,37 @@ async function getAllFoodItems(req, res) {
     const allFoodItems = await foodItems
       .find({
         caterer: { _id: authUser },
+        [searchBy]: { $regex: search, $options: 'i' },
+      })
+      .populate('category');
+
+    return res.status(200).json(allFoodItems);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
+
+async function getAllFoodItemsByCatererAndCategory(req, res) {
+  try {
+    const {
+      searchBy = 'title',
+      search = '',
+      categoryName = '',
+      caterer,
+    } = req.query;
+
+    if (!caterer || !categoryName)
+      return res.status(400).json(errorMessages.invalidRequest);
+
+    const category = await categories.findOne({ name: categoryName });
+
+    if (!category) return res.status(404).json(errorMessages.notFound);
+
+    const allFoodItems = await foodItems
+      .find({
+        caterer: { _id: caterer },
+        category: { _id: category._id },
         [searchBy]: { $regex: search, $options: 'i' },
       })
       .populate('category');
@@ -54,5 +87,6 @@ async function createNewFoodItem(req, res) {
 
 module.exports = {
   getAllFoodItems,
+  getAllFoodItemsByCatererAndCategory,
   createNewFoodItem,
 };
