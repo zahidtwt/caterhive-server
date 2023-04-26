@@ -5,6 +5,7 @@ const validator = require('../../utils/validator');
 const {
   catererValidatorSchema,
   dayMenuValidatorSchema,
+  eventServiceValidatorSchema,
 } = require('./caterer.validator');
 const { uploadImageToCloudinary } = require('../../services/cloudinary');
 const jwt = require('jsonwebtoken');
@@ -12,6 +13,7 @@ const { JWT_KEY, ENV } = require('../../config');
 const customers = require('../../models/customer/customer.model');
 const { reviewValidatorSchema } = require('../menu/menu.validator');
 const reviews = require('../../models/review/review.model');
+
 const weekMenuPopulation = {
   path: 'weekMenu',
   populate: [
@@ -22,6 +24,24 @@ const weekMenuPopulation = {
     { path: 'wednesday', populate: 'menus caterer' },
     { path: 'thursday', populate: 'menus caterer' },
     { path: 'friday', populate: 'menus caterer' },
+  ],
+};
+
+const eventServicePopulation = {
+  path: 'eventService',
+  populate: [
+    {
+      path: 'basic',
+      populate: 'caterer appetizers mainCourses desserts drinks',
+    },
+    {
+      path: 'standard',
+      populate: 'caterer appetizers mainCourses desserts drinks',
+    },
+    {
+      path: 'premium',
+      populate: 'caterer appetizers mainCourses desserts drinks',
+    },
   ],
 };
 
@@ -83,6 +103,7 @@ async function getCatererById(req, res) {
     const caterer = await caterers
       .findById(id, { password: 0 })
       .populate('operationalAreas')
+      .populate(eventServicePopulation)
       .populate(weekMenuPopulation)
       .populate({
         path: 'reviews',
@@ -107,6 +128,7 @@ async function getOwnData(req, res) {
       .findById(authUser, { password: 0 })
       .populate('operationalAreas')
       .populate(weekMenuPopulation)
+      .populate(eventServicePopulation)
       .populate('reviews');
 
     if (!caterer) return res.status(404).json(errorMessages.notFound);
@@ -160,17 +182,17 @@ async function loginCaterer(req, res) {
     const { email, password } = req.body;
 
     if (!email || !password)
-      return res.status(400).json(errorMessages.invlidLogin);
+      return res.status(400).json(errorMessages.invalidLogin);
 
     const caterer = await caterers.findOne({
       email,
     });
 
-    if (!caterer) return res.status(400).json(errorMessages.invlidLogin);
+    if (!caterer) return res.status(400).json(errorMessages.invalidLogin);
 
     const passwordMatch = await verifyPassword(password, caterer.password);
 
-    if (!passwordMatch) return res.status(400).json(errorMessages.invlidLogin);
+    if (!passwordMatch) return res.status(400).json(errorMessages.invalidLogin);
 
     const token = jwt.sign({ id: caterer._id }, JWT_KEY, {
       expiresIn: ENV === 'production' ? '1h' : '30d',
@@ -293,6 +315,31 @@ async function addDayMenu(req, res) {
   }
 }
 
+async function addEventService(req, res) {
+  try {
+    const { authUser, body } = req;
+
+    const caterer = await caterers.findById(authUser);
+
+    if (!caterer) return res.status(404).json(errorMessages.notFound);
+
+    const { error } = validator(eventServiceValidatorSchema, body);
+
+    if (error) return res.status(400).json(error.message);
+
+    caterer.eventService[body.tier.toLowerCase()] = body.eventMenu;
+
+    await caterer.save();
+
+    await caterer.populate(eventServicePopulation);
+
+    return res.status(200).json(caterer.eventService);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+}
+
 module.exports = {
   getAllCaterers,
   getAllCaterersByArea,
@@ -303,4 +350,5 @@ module.exports = {
   reviewCatererById,
   addCatererToBookmark,
   addDayMenu,
+  addEventService,
 };
