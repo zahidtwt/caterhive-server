@@ -109,17 +109,17 @@ async function loginCustomer(req, res) {
     const { email, password } = req.body;
 
     if (!email || !password)
-      return res.status(400).json(errorMessages.invlidLogin);
+      return res.status(400).json(errorMessages.invalidLogin);
 
     const customer = await customers.findOne({
       email,
     });
 
-    if (!customer) return res.status(400).json(errorMessages.invlidLogin);
+    if (!customer) return res.status(400).json(errorMessages.invalidLogin);
 
     const passwordMatch = await verifyPassword(password, customer.password);
 
-    if (!passwordMatch) return res.status(400).json(errorMessages.invlidLogin);
+    if (!passwordMatch) return res.status(400).json(errorMessages.invalidLogin);
 
     const token = jwt.sign({ id: customer._id }, JWT_KEY, {
       expiresIn: ENV === 'production' ? '1h' : '30d',
