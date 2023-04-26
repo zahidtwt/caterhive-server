@@ -4,7 +4,6 @@ const orders = require('../../models/order/order.model');
 const validator = require('../../utils/validator');
 const errorMessages = require('../../utils/errorMessages');
 const orderValidatorSchema = require('./order.validator');
-const menus = require('../../models/menu/menu.model');
 
 async function getOrdersForCaterers(req, res) {
   try {

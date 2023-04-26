@@ -18,7 +18,7 @@ const orderValidatorSchema = joi.object({
     .max(255)
     .required()
     .label('Shipping Address'),
-  specialInstruction: joi.string().min(3).max(255).label('Special Instruction'),
+  specialInstruction: joi.string().max(255).label('Special Instruction'),
 });
 
 module.exports = orderValidatorSchema;
