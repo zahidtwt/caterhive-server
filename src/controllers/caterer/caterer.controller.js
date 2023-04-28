@@ -57,8 +57,6 @@ async function getAllCaterers(req, res) {
         : { [searchBy]: { $regex: search, $options: 'i' } };
     }
 
-    console.log(searchQuery);
-
     const allCaterers = await caterers
       .find(searchQuery, { password: 0 })
       .populate('operationalAreas')
@@ -75,7 +73,6 @@ async function getAllCaterers(req, res) {
 async function getAllCaterersByArea(req, res) {
   try {
     const { area } = req.query;
-    console.log(area);
 
     const allCaterers = await caterers
       .find(
@@ -237,11 +234,6 @@ async function reviewCatererById(req, res) {
       +caterer.reviews.length
     ).toFixed(2);
 
-    console.log(
-      caterer.reviews,
-      caterer.reviews.reduce((acc, curr) => curr.rating + acc, 0),
-      +caterer.reviews.length
-    );
     await caterer.save();
 
     await caterer.populate([
@@ -251,7 +243,6 @@ async function reviewCatererById(req, res) {
       { path: 'reviews', populate: { path: 'user' } },
     ]);
 
-    console.log(caterer, newReview);
     return res.status(200).json(caterer);
   } catch (error) {
     console.log(error);
