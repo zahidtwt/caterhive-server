@@ -32,6 +32,21 @@ const eventMenuSchema = new Schema({
     ref: 'Food-Item',
     required: true,
   },
+  minEventOrder: {
+    type: Number,
+    required: true,
+    default: 50,
+  },
+  discountOnEachHundred: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  maxDiscount: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
 });
 
 const eventMenus = model('Event-Menu', eventMenuSchema);
