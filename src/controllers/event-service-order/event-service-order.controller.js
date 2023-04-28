@@ -5,6 +5,15 @@ const errorMessages = require('../../utils/errorMessages');
 const eventServiceOrders = require('../../models/event-sevice-order/event-service-order.model');
 const eventServiceOrderValidatorSchema = require('./event-service-order.validator');
 
+const eventOrderPopulation = [
+  { path: 'customer' },
+  { path: 'caterer' },
+  {
+    path: 'menu',
+    populate: 'appetizers mainCourses desserts drinks',
+  },
+];
+
 async function getAllEventServiceOrdersByCaterer(req, res) {
   try {
     const { authUser } = req;
@@ -17,7 +26,7 @@ async function getAllEventServiceOrdersByCaterer(req, res) {
       .find({
         caterer: { _id: authUser },
       })
-      .populate({ path: 'customer menu' })
+      .populate('customer menu')
       .sort({ orderedAt: 'desc' });
 
     res.status(200).json(allOrdersOfCaterer);
@@ -39,7 +48,7 @@ async function getEventServiceOrdersForCustomers(req, res) {
       .find({
         customer: { _id: authUser },
       })
-      .populate([{ path: 'caterer menu' }])
+      .populate('caterer menu')
       .sort({ orderedAt: 'desc' });
 
     res.status(200).json(allOrdersOfCaterer);
@@ -55,7 +64,7 @@ async function getEventServiceOrderById(req, res) {
 
     const order = await eventServiceOrders
       .findById(id)
-      .populate([{ path: 'caterer menu' }]);
+      .populate(eventOrderPopulation);
 
     if (!order) return res.status(404).json(errorMessages.notFound);
 
@@ -84,7 +93,7 @@ async function createNewEventServiceOrder(req, res) {
     if (!caterer)
       return res.status(404).json('Caterer' + errorMessages.notFound);
 
-    const newOrder = await orders.create({
+    const newOrder = await eventServiceOrders.create({
       ...body,
       customer: authUser,
       orderStatus: 'processing',
