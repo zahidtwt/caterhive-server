@@ -49,7 +49,6 @@ const orderSchema = new Schema({
   },
   specialInstruction: {
     type: String,
-    min: 3,
     max: 255,
   },
   orderedAt: {
