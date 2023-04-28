@@ -25,6 +25,11 @@ const eventServiceOrderShcema = new Schema({
     type: Number,
     required: true,
   },
+  discount: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
   orderStatus: {
     type: String,
     min: 3,
