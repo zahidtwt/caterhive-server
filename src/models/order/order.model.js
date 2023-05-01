@@ -54,7 +54,7 @@ const orderSchema = new Schema({
   orderedAt: {
     type: Date,
     required: true,
-    default: new Date().toISOString(),
+    // default: new Date().toISOString(),
   },
 });
 

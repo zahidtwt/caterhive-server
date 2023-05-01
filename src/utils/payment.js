@@ -2,8 +2,8 @@ const { SSL_STORE_ID, SSL_STORE_PASSWORD } = require('../config');
 
 const SSLCommerzPayment = require('sslcommerz-lts');
 
-const store_id = SSL_STORE_ID;
-const store_passwd = SSL_STORE_PASSWORD;
+const store_id = 'flyaw6416b5ad47c55';
+const store_passwd = 'flyaw6416b5ad47c55@ssl';
 const is_live = false;
 
 const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);

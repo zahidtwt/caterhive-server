@@ -103,7 +103,9 @@ async function createNewOrder(req, res) {
       ...body,
       customer: authUser,
       orderStatus: 'processing',
+      orderedAt: new Date().toISOString(),
     });
+    console.log(newOrder);
 
     return res.status(201).json(newOrder);
   } catch (error) {
