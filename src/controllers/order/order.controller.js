@@ -50,7 +50,7 @@ async function getOrdersForCustomers(req, res) {
       })
       .populate([
         { path: 'caterer' },
-        { path: 'orderedProducts', populate: { path: 'menu' } },
+        { path: 'orderedProducts', populate: { path: 'menu', model: 'Menu' } },
       ])
       .sort({ orderedAt: 'desc' });
 
