@@ -1,16 +1,16 @@
-const caterers = require('../../models/caterer/caterer.model');
-const customers = require('../../models/customer/customer.model');
-const validator = require('../../utils/validator');
-const errorMessages = require('../../utils/errorMessages');
-const eventServiceOrders = require('../../models/event-sevice-order/event-service-order.model');
-const eventServiceOrderValidatorSchema = require('./event-service-order.validator');
+const caterers = require("../../models/caterer/caterer.model");
+const customers = require("../../models/customer/customer.model");
+const validator = require("../../utils/validator");
+const errorMessages = require("../../utils/errorMessages");
+const eventServiceOrders = require("../../models/event-sevice-order/event-service-order.model");
+const eventServiceOrderValidatorSchema = require("./event-service-order.validator");
 
 const eventOrderPopulation = [
-  { path: 'customer' },
-  { path: 'caterer' },
+  { path: "customer" },
+  { path: "caterer" },
   {
-    path: 'menu',
-    populate: 'appetizers mainCourses desserts drinks',
+    path: "menu",
+    populate: "appetizers mainCourses desserts drinks",
   },
 ];
 
@@ -26,8 +26,8 @@ async function getAllEventServiceOrdersByCaterer(req, res) {
       .find({
         caterer: { _id: authUser },
       })
-      .populate('customer menu')
-      .sort({ orderedAt: 'desc' });
+      .populate("customer menu")
+      .sort({ orderedAt: "desc" });
 
     res.status(200).json(allOrdersOfCaterer);
   } catch (error) {
@@ -48,8 +48,8 @@ async function getEventServiceOrdersForCustomers(req, res) {
       .find({
         customer: { _id: authUser },
       })
-      .populate('caterer menu')
-      .sort({ orderedAt: 'desc' });
+      .populate("caterer menu")
+      .sort({ orderedAt: "desc" });
 
     res.status(200).json(allOrdersOfCaterer);
   } catch (error) {
@@ -86,17 +86,17 @@ async function createNewEventServiceOrder(req, res) {
     const customer = await customers.findById(authUser);
 
     if (!customer)
-      return res.status(404).json('Customer' + errorMessages.notFound);
+      return res.status(404).json("Customer" + errorMessages.notFound);
 
     const caterer = await caterers.findById(body.caterer);
 
     if (!caterer)
-      return res.status(404).json('Caterer' + errorMessages.notFound);
+      return res.status(404).json("Caterer" + errorMessages.notFound);
 
     const newOrder = await eventServiceOrders.create({
       ...body,
       customer: authUser,
-      orderStatus: 'processing',
+      orderStatus: "processing",
     });
 
     return res.status(201).json(newOrder);
@@ -121,7 +121,7 @@ async function updateEventServiceOrderById(req, res) {
 
     await order.save();
 
-    await order.populate({ path: 'customer menu' });
+    await order.populate({ path: "customer menu" });
 
     res.status(200).json(order);
   } catch (error) {

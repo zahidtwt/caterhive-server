@@ -1,22 +1,22 @@
-const menus = require('../../models/menu/menu.model');
+const menus = require("../../models/menu/menu.model");
 const {
   menuValidatorSchema,
   reviewValidatorSchema,
-} = require('./menu.validator');
-const validator = require('../../utils/validator');
-const { uploadImageToCloudinary } = require('../../services/cloudinary');
-const errorMessages = require('../../utils/errorMessages');
-const reviews = require('../../models/review/review.model');
-const customers = require('../../models/customer/customer.model');
+} = require("./menu.validator");
+const validator = require("../../utils/validator");
+const { uploadImageToCloudinary } = require("../../services/cloudinary");
+const errorMessages = require("../../utils/errorMessages");
+const reviews = require("../../models/review/review.model");
+const customers = require("../../models/customer/customer.model");
 
 async function getMenusByCaterer(req, res) {
   try {
     const { authUser, query } = req;
-    const { searchBy = 'title', search = '' } = query;
+    const { searchBy = "title", search = "" } = query;
 
     const allMenus = await menus.find({
       caterer: { _id: authUser },
-      [searchBy]: { $regex: search, $options: 'i' },
+      [searchBy]: { $regex: search, $options: "i" },
     });
 
     return res.status(200).json(allMenus);
@@ -33,10 +33,25 @@ async function getMenuById(req, res) {
     const menu = await menus
       .findById(id)
       .populate([
-        { path: 'caterer' },
-        { path: 'foodItems' },
-        { path: 'reviews', populate: { path: 'user' } },
+        { path: "caterer" },
+        { path: "foodItems" },
+        { path: "reviews", populate: { path: "user" } },
       ]);
+
+    if (!menu) return res.status(404).json(errorMessages.notFound);
+
+    return res.status(200).json(menu);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+}
+
+async function deleteMenuById(req, res) {
+  try {
+    const { id } = req.params;
+
+    const menu = await menus.findByIdAndDelete(id);
 
     if (!menu) return res.status(404).json(errorMessages.notFound);
 
@@ -51,7 +66,7 @@ async function createNewMenu(req, res) {
   try {
     const { authUser, body } = req;
 
-    if (!authUser) return res.status(404).json('User not found');
+    if (!authUser) return res.status(404).json("User not found");
 
     const { error } = validator(menuValidatorSchema, body);
 
@@ -67,7 +82,7 @@ async function createNewMenu(req, res) {
 
     const newMenu = await menus.create(menuCreds);
 
-    await newMenu.populate('foodItems');
+    await newMenu.populate("foodItems");
 
     newMenu.price = newMenu.foodItems.reduce(
       (acc, curr) => curr.price + acc,
@@ -107,7 +122,7 @@ async function reviewMenuById(req, res) {
     });
 
     menu.reviews.push(newReview._id);
-    await menu.populate('reviews');
+    await menu.populate("reviews");
 
     menu.rating = (
       menu.reviews.reduce((acc, curr) => curr.rating + acc, 0) /
@@ -117,9 +132,9 @@ async function reviewMenuById(req, res) {
     await menu.save();
 
     await menu.populate([
-      { path: 'caterer' },
-      { path: 'foodItems' },
-      { path: 'reviews', populate: { path: 'user' } },
+      { path: "caterer" },
+      { path: "foodItems" },
+      { path: "reviews", populate: { path: "user" } },
     ]);
     return res.status(200).json(menu);
   } catch (error) {
@@ -144,13 +159,13 @@ async function addMenuToBookmark(req, res) {
     const customerMenus = customer.bookmarks.menus;
     if (customerMenus.includes(id))
       customer.bookmarks.menus = customerMenus.filter(
-        (menu) => menu._id + '' !== id
+        (menu) => menu._id + "" !== id
       );
     else customer.bookmarks.menus.push(id);
 
     await customer.save();
 
-    await customer.populate('area');
+    await customer.populate("area");
 
     return res.status(200).json(customer);
   } catch (error) {
@@ -165,4 +180,5 @@ module.exports = {
   createNewMenu,
   reviewMenuById,
   addMenuToBookmark,
+  deleteMenuById,
 };
